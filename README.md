@@ -6,12 +6,17 @@ tags but not in CloudFormation. With the provider you can specify tags as a sepa
 Very simply, add a [Custom::Tag](docs/tag.md) to your CloudFormation template:
 
 ```yaml
-Tag:
+EIPBastionPoolTag:
   Type: Custom::Tag
   Properties:
-    ResourceARN: !Ref EIP
+    ResourceARN:
+      - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:eip/${EIP1.AllocationId}'
+      - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:eip/${EIP2.AllocationId}'
+      - !Sub 'arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:eip/${EIP3.AllocationId}'
     Tags:
-      key: value
+      EIPPoolName: eip-bastion-pool
+
+    ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-tag-provider'
 ```
 
 ### Deploy the provider
