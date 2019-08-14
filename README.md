@@ -1,7 +1,6 @@
 # tag-provider
 CloudFormation custom resource provider for managing any AWS resource tags. Sometimes a resource, such as AWS::EC2::EIP, does support
-tags but not in CloudFormation. Sometimes, a custom provider does not support tags directly, as it is not part of the API call. With
-the provider you can specify tags as a separate CloudFormation resource.
+tags but not in CloudFormation. With the provider you can specify tags as a separate CloudFormation resource.
 
 # How does it work?
 Very simply, add a [Custom::Tag](docs/tag.md) to your CloudFormation template:
