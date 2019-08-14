@@ -32,7 +32,7 @@ aws cloudformation create-stack \
 aws cloudformation wait stack-create-complete  --stack-name cfn-tag-provider
 ```
 
-This CloudFormation template will use our pre-packaged provider from `s3://binxio-public/lambdas/cfn-tag-provider-0.1.3.zip`.
+This CloudFormation template will use our pre-packaged provider from `s3://binxio-public/lambdas/cfn-tag-provider-0.1.4.zip`.
 
 
 ### Deploy the demo
