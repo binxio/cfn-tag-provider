@@ -8,7 +8,9 @@ To tag a resource using your your AWS CloudFormation template, use the following
 ResourceTag:
   Type: Custom::Tag
   Properties:
-    ResourceARN: <ARN>
+    ResourceARN: 
+     - <ARN>
+     - ...
     Tags:
       <key>: <value>
     ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-tag-provider'

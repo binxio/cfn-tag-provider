@@ -17,7 +17,8 @@ Resources:
     Type: Custom::Tag
     Properties:
       ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-tag-provider'
-      ResourceARN: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${Parameter}'
+      ResourceARN: 
+        - !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${Parameter}'
       Tags:
        tag1: value1
        tag2: value23

@@ -15,7 +15,7 @@ request_schema = {
         "type": "object",
         "required": ["ResourceARN", "Tags"],
         "properties": {
-            "ResourceARN": {"type": "string", "description": "of the resource"},
+            "ResourceARN": {"type": "array", "items": {"type": "string"}},
             "Tags": {"type": "object"},
         },
     },
@@ -28,12 +28,12 @@ class TagProvider(ResourceProvider):
         self.rg_tagging = boto3.client("resourcegroupstaggingapi")
 
     @property
-    def resource_arn(self):
-        return self.get("ResourceARN")
+    def resource_arns(self):
+        return sorted(self.get("ResourceARN"))
 
     @property
-    def old_resource_arn(self):
-        return self.get_old("ResourceARN", self.resource_arn)
+    def old_resource_arns(self):
+        return sorted(self.get_old("ResourceARN", self.resource_arns))
 
     @property
     def tags(self):
@@ -44,18 +44,18 @@ class TagProvider(ResourceProvider):
         return self.get_old("Tags", self.tags)
 
     def has_changes(self):
-        return self.resource_arn != self.old_resource_arn or self.tags != self.old_tags
+        return self.resource_arns != self.old_resource_arns or self.tags != self.old_tags
 
     def check_errors(self, response):
-        if response['FailedResourcesMap']:
-            log.error('response %s', response)
-            self.fail(response['FailedResourcesMap'][0].get('ErrorMessage'))
+        if response["FailedResourcesMap"]:
+            log.error("response %s", response)
+            self.fail(response["FailedResourcesMap"][0].get("ErrorMessage"))
             return False
         return True
 
     def apply_tags(self):
         response = self.rg_tagging.tag_resources(
-            ResourceARNList=[self.resource_arn], Tags=self.tags
+            ResourceARNList=self.resource_arns, Tags=self.tags
         )
         self.check_errors(response)
 
@@ -74,14 +74,14 @@ class TagProvider(ResourceProvider):
         keys = list(self.old_tags.keys())
         if keys:
             response = self.rg_tagging.untag_resources(
-                ResourceARNList=[self.resource_arn], TagKeys=keys
+                ResourceARNList=self.resource_arns, TagKeys=keys
             )
 
     def delete(self):
         keys = list(self.tags.keys())
         if keys:
             response = self.rg_tagging.untag_resources(
-                ResourceARNList=[self.resource_arn], TagKeys=keys
+                ResourceARNList=self.resource_arns, TagKeys=keys
             )
 
 
