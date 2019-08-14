@@ -18,6 +18,7 @@ EIPBastionPoolTag:
 
     ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-tag-provider'
 ```
+You can tag any resource and add multiple tags in a single resource.
 
 ### Deploy the provider
 To deploy the provider, type:
