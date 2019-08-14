@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Tag Provider Demo
+Parameters:
+  Date:
+    Type: String
+    Default: '1970-01-01T00:00:00'
+Resources:
+  Parameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: demo resource
+      Name: !Sub '/${AWS::StackName}/demo/tag'
+      Type: String
+      Value: 'hello world'
+
+  Tag:
+    Type: Custom::Tag
+    Properties:
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cfn-tag-provider'
+      ResourceARN: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter${Parameter}'
+      Tags:
+       tag1: value1
+       tag2: value23
+       last-update: !Ref Date
+       stack: !Ref AWS::StackName
+
+Outputs:
+   ResourceARN:
+     Value: !Ref Parameter

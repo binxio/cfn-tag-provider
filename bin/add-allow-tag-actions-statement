@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+# vim: tabstop=4 shiftwidth=4 expandtab
+import os
+import json,sys
+from ruamel.yaml import YAML
+from botocore.session import Session
+
+def load_all_tag_actions():
+    session = Session()
+    loader = session.get_component('data_loader')
+    services = loader.list_available_services('service-2')
+
+    result = []
+    for service in services:
+        model = loader.load_service_model(service, 'service-2')
+        operations = model.get('operations')
+        tag_operations = list(filter(lambda o: 'Tag' in o, operations))
+        result.extend(map(lambda operation : f'{service}:{operation}', tag_operations))
+        if tag_operations:
+            result.append(f'{service}:Get*')
+    return result
+
+
+def add_tag_operations_statement(file_name, actions):
+    yaml = YAML()
+    yaml.indent(mapping=2, sequence=4, offset=2)
+    with open(file_name, 'r') as f:
+        template = yaml.load(f)
+            
+    policy_document = template.get('Resources').get('LambdaPolicy').get('Properties').get('PolicyDocument')
+    statements = policy_document.get('Statement')
+
+    existing = next(filter(lambda s : s['Sid'] == 'GeneratedTagActionsFromAPI', statements), None)
+    if existing:
+        if existing.get("Action") == actions:
+            sys.stderr.write( 'INFO: actions in "GeneratedTagActionsFromAPI" statement do not require changes\n')
+            return
+        sys.stderr.write( 'INFO: updating actions of "GeneratedTagActionsFromAPI" statement\n')
+        existing["Action"] = actions
+    else:
+        sys.stderr.write( 'INFO: adding "GeneratedTagActionsFromAPI" statement\n')
+        statements.append({
+            "Effect": "Allow",
+            "Sid": "GeneratedTagActionsFromAPI",
+            "Action": actions,
+            "Resource": [ "*" ]
+        })
+    os.rename(file_name, f'{file_name}-')
+    try:
+        with open(file_name, 'w') as f:
+           yaml.dump(template, f)
+    except Exception as e:
+        os.rename(f'{file_name}-', file_name)
+        raise e
+
+if __name__ == '__main__':
+    actions = load_all_tag_actions()
+    add_tag_operations_statement('cloudformation/cfn-resource-provider.yaml', actions)
+
