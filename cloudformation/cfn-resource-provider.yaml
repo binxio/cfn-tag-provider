@@ -160,7 +160,6 @@ Resources:
               - ec2:DescribeTags
               - ec2:Get*
               - ecr:ListTagsForResource
-              - ecr:PutImageTagMutability
               - ecr:TagResource
               - ecr:Get*
               - ecs:ListTagsForResource

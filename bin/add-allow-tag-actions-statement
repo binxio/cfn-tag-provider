@@ -14,7 +14,7 @@ def load_all_tag_actions():
     for service in services:
         model = loader.load_service_model(service, 'service-2')
         operations = model.get('operations')
-        tag_operations = list(filter(lambda o: 'Tag' in o, operations))
+        tag_operations = sorted(list(filter(lambda o: 'Tag' in o, operations)))
         result.extend(map(lambda operation : f'{service}:{operation}', tag_operations))
         if tag_operations:
             result.append(f'{service}:Get*')
