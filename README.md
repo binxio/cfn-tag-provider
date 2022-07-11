@@ -42,7 +42,7 @@ In order to deploy the demo, type:
 aws cloudformation create-stack \
         --capabilities CAPABILITY_NAMED_IAM \
         --stack-name cfn-tag-provider-demo \
-        --template-body file://./cloudformation/demo.yaml
+        --template-body file://./cloudformation/demo-stack.yaml
 
 aws cloudformation wait stack-create-complete  --stack-name cfn-tag-provider-demo
 ```
