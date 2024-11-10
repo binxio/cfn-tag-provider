@@ -1,2 +1,9 @@
-pytest
-ruamel.yaml
+-i https://pypi.org/simple
+exceptiongroup==1.2.2; python_version < '3.11'
+iniconfig==2.0.0; python_version >= '3.7'
+packaging==24.2; python_version >= '3.8'
+pluggy==1.5.0; python_version >= '3.8'
+pytest==8.3.3; python_version >= '3.8'
+ruamel.yaml==0.18.6; python_version >= '3.7'
+ruamel.yaml.clib==0.2.12; platform_python_implementation == 'CPython' and python_version < '3.13'
+tomli==2.0.2; python_version < '3.11'
